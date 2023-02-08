@@ -3,7 +3,7 @@
 - [About Azure Data Explorer](https://azure.microsoft.com/en-us/services/data-explorer/)
 - [Go Client documentation](https://godoc.org/github.com/Azure/azure-kusto-go)
 
-This is a data plane SDK (it is for interacting with Azure Data Explorer (Kusto) service). For the control plane (resource administration), go [here](https://github.com/Azure/azure-sdk-for-go/tree/master/services/kusto/mgmt).
+This is a data plane SDK (it is for interacting with Azure Data Explorer (Kusto) service). For the control plane (resource administration), go [here](https://github.com/Azure/azure-sdk-for-go/treemaster//services/kusto/mgmt).
 
 Use the data plane SDK `github.com/Azure/azure-kusto-go/kusto` in your application to:
 
@@ -13,11 +13,10 @@ Use the data plane SDK `github.com/Azure/azure-kusto-go/kusto` in your applicati
 **NOTE**: This library is currently a beta. There may be breaking changes until it reaches semantic version `v1.0.0`.
 
 Key links:
-- [Source code][source]
-- [API Reference Documentation][godoc]
+- [Source code](https://github.com/Azure/azure-kusto-go)
+- [API Reference Documentation](https://pkg.go.dev/github.com/Azure/azure-kusto-go)
 - [Product documentation](https://azure.microsoft.com/en-us/services/data-explorer/)
-- [Samples][godoc_examples]
-
+- [Samples](https://pkg.go.dev/github.com/Azure/azure-kusto-go#readme-examples)
 
 ## Key concepts
 
@@ -37,7 +36,7 @@ For more information about Azure Data Explorer (Kusto), its features, and releva
 Install the Kusto/Azure Data Explorer client module for Go with `go get`:
 
 ```bash
-go get github.com/Azure/azure-kuso-go
+go get github.com/Azure/azure-kusto-go
 ```
 
 ### Prerequisites
@@ -53,7 +52,7 @@ Examples for various scenarios can be found on [pkg.go.dev](https://pkg.go.dev/g
 
 ### Create the connection string
 
-Azure Data Explorer (Kusto) connection strings are created using a connection string builder for an exisitng Azure Data Explorer (Kusto) cluster endpoint of the form `https://<cluster name>.<location>.kusto.windows.net`.
+Azure Data Explorer (Kusto) connection strings are created using a connection string builder for an existing Azure Data Explorer (Kusto) cluster endpoint of the form `https://<cluster name>.<location>.kusto.windows.net`.
 
 ```go
 kustoConnectionStringBuilder := kusto.NewConnectionStringBuilder(endpoint)
@@ -62,14 +61,14 @@ kustoConnectionStringBuilder := kusto.NewConnectionStringBuilder(endpoint)
 ### Create and authenticate the client
 
 Azure Data Explorer (Kusto) clients are created from a connection string and authenticated using a credential from the [Azure Identity package][azure_identity_pkg], like [DefaultAzureCredential][default_azure_credential].
-You can also authenticate a client using a system- or user-assigned managed identity with Azure Actice Directory (AAD) credentials.
+You can also authenticate a client using a system- or user-assigned managed identity with Azure Active Directory (AAD) credentials.
 
 #### Using the `DefaultAzureCredential`
 
 ```go
 // kusto package is: github.com/Azure/azure-kusto-go/kusto
 
-// Initialize a new kusto client using the defulat Azure credential
+// Initialize a new kusto client using the default Azure credential
 kustoConnectionString := kustoConnectionStringBuilder.WithDefaultAzureCredential()
 client, err = kusto.New(kustoConnectionString)
 if err != nil {
@@ -96,21 +95,21 @@ client, err = kusto.New(kustoConnectionString)
 #### Using a user-assigned managed identity
 
 ```go
-kustoConnectionString := kustoConnectionStringBuilder.WithUserManagedIdentity(clientID string)
+kustoConnectionString := kustoConnectionStringBuilder.WithUserManagedIdentity(clientID)
 client, err = kusto.New(kustoConnectionString)
 ```
 
 #### Using an application token
 
 ```go
-kustoConnectionString := kustoConnectionStringBuilder.WithApplicationToken(appId string, appToken string)
+kustoConnectionString := kustoConnectionStringBuilder.WithApplicationToken(appId, appToken)
 client, err = kusto.New(kustoConnectionString)
 ```
 
 #### Using an application certificate
 
 ```go
-kustoConnectionString := kustoConnectionStringBuilder.WithAppCertificate(appId string, certificate string, thumprint string, sendCertChain bool, authorityID string)
+kustoConnectionString := kustoConnectionStringBuilder.WithAppCertificate(appId, certificate, thumbprint, sendCertChain, authorityID)
 client, err = kusto.New(kustoConnectionString)
 ```
 
@@ -118,7 +117,7 @@ client, err = kusto.New(kustoConnectionString)
 
 #### Query For Rows
 
-The Kusto package package queries data into a ***table.Row** which can be printed or have the column data extracted.
+The kusto `table` package queries data into a ***table.Row** which can be printed or have the column data extracted.
 
 ```go
 // table package is: github.com/Azure/azure-kusto-go/kusto/data/table
@@ -148,7 +147,7 @@ if err != nil {
 #### Query Into Structs
 
 Users will often want to turn the returned data into Go structs that are easier to work with.  The ***table.Row** object
-that is returned supports this via the **.ToStruct()** method.
+that is returned supports this via the `.ToStruct()` method.
 
 ```go
 // NodeRec represents our Kusto data that will be returned.
@@ -186,21 +185,21 @@ if err != nil {
 
 ### Ingestion
 
-The **ingest/** package provides access to Kusto's ingestion service for importing data into Kusto. This requires
-some prerequisite knowledge of acceptable data formats, mapping references, ...
+The `ingest` package provides access to Kusto's ingestion service for importing data into Kusto. This requires
+some prerequisite knowledge of acceptable data formats, mapping references, etc.
 
 That documentation can be found [here](https://docs.microsoft.com/en-us/azure/kusto/management/data-ingestion/)
 
 Kusto's ingestion service makes no guarantees on when the data will show up in the table and is optimized for
 large chunks of data and not small uploads at a high rate.
 
-If ingesting data from memory, it is suggested that you stream the data in via FromReader() passing in the reader
-from an io.Pipe(). The data will not begin ingestion until the writer closes.
+If ingesting data from memory, it is suggested that you stream the data in via `FromReader()` passing in the reader
+from an `io.Pipe()`. The data will not begin ingestion until the writer closes.
 
 
 #### Setup an ingestion client
 
-Setup is quite simple, simply pass a *kusto.Client, the name of the database and table you wish to ingest into.
+Setup is quite simple, simply pass a `*kusto.Client`, the name of the database and table you wish to ingest into.
 
 ```go
 in, err := ingest.New(kustoClient, "database", "table")
@@ -221,7 +220,7 @@ if _, err := in.FromFile(ctx, "/path/to/a/local/file"); err != nil {
 }
 ```
 
-FromFile() will accept Unix path names on Unix platforms and Windows path names on Windows platforms.
+`FromFile()` will accept Unix path names on Unix platforms and Windows path names on Windows platforms.
 The file will not be deleted after upload (there is an option that will allow that though).
 
 #### From a Blob Storage File
@@ -234,12 +233,12 @@ if _, err := in.FromFile(ctx, "https://myaccount.blob.core.windows.net/$root/myb
 }
 ```
 
-This will ingest a file from Azure Blob Storage. We only support https:// paths and your domain name may differ than what is here.
+This will ingest a file from Azure Blob Storage. We only support `https://` paths and your domain name may differ than what is here.
 
 #### Ingestion from an io.Reader
 
 Sometimes you want to ingest a stream of data that you have in memory without writing to disk.  You can do this simply by chunking the
-data via an io.Reader.
+data via an `io.Reader`.
 
 ```go
 r, w := io.Pipe()
@@ -259,8 +258,8 @@ if _, err := in.FromReader(ctx, r); err != nil {
 }
 ```
 
-It is important to remember that FromReader() will terminate when it receives an io.EOF from the io.Reader.  Use io.Readers that won't
-return io.EOF until the io.Writer is closed (such as io.Pipe).
+It is important to remember that `FromReader()` will terminate when it receives an `io.EOF` from the `io.Reader`.  Use `io.Readers` that won't
+return `io.EOF` until the `io.Writer` is closed (such as `io.Pipe`).
 
 #### From a Stream
 
@@ -283,7 +282,7 @@ if err := in.Stream(ctx, jsonEncodedData, ingest.JSON, "mappingName"); err != ni
 * [BREAKING] - The minimal go version is now 1.19
 * [BREAKING] - Moving to a connection-string based approach to creating and authenticating clients.  
     This change aligns the go SDK with the others, and gives the option to re-use connection strings between SDKs.   
-    As part of this change use of go-autorest based authentication is deprecated in favor of Azure Identity.  
+    As part of this change use of `go-autorest` based authentication is deprecated in favor of Azure Identity.  
 
     To initialize a client:
 ```go
@@ -321,7 +320,7 @@ com/Azure/azure-kusto-go/pull/134
 * Added `Application` and `User` as `ClientRequestProperties` to set the `x-ms-app` and `x-ms-user` headers, and the matching fields in `.show queries`. 
 ### Version 0.8.0
 * Add all missing client request properties, and the ability to use custom ones using `CustomQueryOption`
-* Add the option to not parse the response when querying, but to receieve the json directly - `QueryToJson`
+* Add the option to not parse the response when querying, but to receive the json directly - `QueryToJson`
 * Various lint fixes and code improvements
 
 ### Version 0.7.0
@@ -358,7 +357,7 @@ This means that there could be extra data that will be skipped when using these 
 
 #### Fixes
 * Add support for gzipped errors,. Fixed #84
-* Moved from the old deprecated azblob to the new supported one. This should solve some issues in uploading blobs, specifically memory leaks.
+* Moved from the old deprecated `azblob` to the new supported one. This should solve some issues in uploading blobs, specifically memory leaks.
 
 #### Internal Improvements
 * Added go-fmt gate check by @AsafMah in https://github.com/Azure/azure-kusto-go/pull/77
@@ -392,3 +391,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 - [Java](https://github.com/azure/azure-kusto-java)
 - [.NET](https://docs.microsoft.com/en-us/azure/kusto/api/netfx/about-the-sdk)
 - [Python](https://github.com/Azure/azure-kusto-python)
+- [Azure CLI](https://learn.microsoft.com/en-us/azure/data-explorer/create-cluster-database-cli)
+- [PowerShell](https://learn.microsoft.com/en-us/azure/data-explorer/create-cluster-database-powershell)
+- [Azure Resource Manager template](https://learn.microsoft.com/en-us/azure/data-explorer/create-cluster-database-resource-manager)
